@@ -1,0 +1,26 @@
+{
+  "name": "GameBuddy",
+  "short_name": "GameBuddy",
+  "description": "Your ultimate board game companion — dice, timers, spinners, HP tracker and more.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0b1f",
+  "theme_color": "#7c3aed",
+  "categories": ["games", "utilities", "entertainment"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
