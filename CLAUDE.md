@@ -43,7 +43,7 @@ Each tab is a `<div id="panel-<id>" class="panel">`. `showPanel(id)` switches ta
 
 - **Active Players**: 12 meeples (`MEEPLES`). Tap toggles active; press and hold (550 ms) opens a name dialog. The lineup is saved as `gb-lineup` (`{active:[colorIds], names:{colorId:name}}`).
 - **Per-tab rosters**: Turn Order, Score Pad and Player Clock read players through `roster(tab)`. A roster follows the lineup until the tab adds or removes a player, which makes it a local copy (`gb-rosters[tab].custom`). "Use lineup" goes back to following the lineup.
-- **Turn Order**: shuffle into a full order, or pick one random player. The last order is saved as `gb-turn-last`.
+- **Turn Order**: shuffle into a full order, or pick one random player. The last order is saved as `gb-turn-last`; `clearTurnOrder()` (the Clear button, and Deactivate all on the Players tab) removes it.
 - **Score Pad**: a paper-styled grid with a sticky category column and one column per player. Saved in progress as `gb-score` (`{cats, vals:{catId:{playerId:string}}, low, game}`). Enter/Next walks across a row, then down. The ± button handles iPhone keypads without a minus key. The leader gets a highlighter mark; once the sheet is full, the top 3 get medal coins (the lowest 3 with "Lowest score wins" on). Templates are saved as `gb-score-templates`.
   - **Share Results**: "Copy Results" puts a text summary on the clipboard. "Scorecard Image" draws a 1080-wide JPEG on a canvas (`buildScorecard`): an optional board photo, the standings, and the category table on paper. Its preview has Share (Web Share API with files) and Save to Phone (an `<a download>`, or the share sheet on iPhone). The photo is picked through `<label for="photoCam|photoLib">` because iPhone won't open a file picker from a JS click after an await.
 - **Spinner**: a canvas wheel with a walnut rim, brass hub and pointer, and a tick sound per wedge. "Fill with Active Players" loads the lineup.
@@ -59,7 +59,12 @@ Each tab is a `<div id="panel-<id>" class="panel">`. `showPanel(id)` switches ta
   - **Natural 20 / Natural 1** banner on a single d20 without Wild Card.
   - **Roll history**: last 30 rolls in `gb-roll-hist` (`{t, d, r, c}`).
   - **Characters**: `gb-dice-chars` = `{chars:[{id,name,presets:[]}], cur}`. Presets store `dice`, `mod`, and `wild` or `damage/explode/sw`. Old `gamebuddy-dice-presets` were migrated once into "My Presets".
-- **Combat Tracker**: saved in `gb-combat` (`{list, round, turn, gm, sw}`) on every render. Tap the HP number to type damage or healing (`hpEdit`; dialogs support `numeric`, `row`, and `'INPUT:action'` buttons). The Savage Worlds toggle adds Bennies (counter, default 3), Wounds (3 pips + INC) and Fatigue (2 pips + INC) per combatant, with the total penalty shown.
+- **Combat Tracker**: saved in `gb-combat` (`{list, round, turn, gm, sys, scene}`) on every render. A **system picker** (`combatSys`: `std` / `sw` / `fate`) chooses what each card shows (`combatCardHtml`):
+  - **Standard:** HP or damage dealt (GM mode), +/− with step, tap the HP number to type damage or healing (`hpEdit`), D&D-style conditions.
+  - **Savage Worlds:** no HP. Bennies, Wounds (3 + INC) and Fatigue (2 + INC) pips with the total penalty, SWADE statuses (`SW_CONDITIONS`). INC wounds = Incapacitated.
+  - **Fate:** Physical/Mental stress boxes (tap the label to resize, default 3), Mild/Moderate/Severe consequences, Fate points, Taken Out, and aspects with free invokes (`aspectMenu`). A Scene card (`fateScene`) holds situation aspects and **zones**; combatants get a zone chip and the list groups by zone. **Popcorn initiative**: "Pick next" (`pickNext`) lets the current actor choose from those who haven't acted; when everyone has, the round advances. Combatants keep the order they were added in.
+  - Dialogs support `numeric`, `row`, and `'INPUT:action'` buttons.
+- **Fate dice:** a tray of only dF (no Wild Card) shows Fate ladder names (`ladder()`), and the stepper becomes **Opposition** (`diceSet.opp`). The banner shows Fail / Tie / Succeed / Succeed with Style (3+ shifts).
 
 ### General
 
@@ -70,6 +75,11 @@ Each tab is a `<div id="panel-<id>" class="panel">`. `showPanel(id)` switches ta
 ### Shared helpers
 
 `ic(name)`, `uiAlert/uiConfirm/uiPrompt/uiDialog` (in-app, Promise-based; **never use the browser's `alert/confirm/prompt`**), `toast(msg)`, `load/store` (localStorage JSON wrapped in try/catch), `getAudio/tone/beep` (one shared AudioContext, unlocked on first tap), `wakeOn/wakeOff(reason)`, `vibrate`, `openModal/closeModal`, `openInstall`, `esc` (escape user text before inserting it into HTML).
+
+## Ideas for later (requested by the user, not built yet)
+
+- **Combat parties:** saved Party tabs in the Combat Tracker that auto-fill the player characters each fight, with enemies added after.
+- **Combatant sides:** color each combatant by side: green = party, red = enemy, yellow = neutral (or other). Probably a side picker on each card, with the color driving the card's accent stripe and token.
 
 ## Conventions
 
