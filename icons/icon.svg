@@ -1,24 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4f46e5"/>
-      <stop offset="55%" stop-color="#7c3aed"/>
-      <stop offset="100%" stop-color="#9d174d"/>
-    </linearGradient>
-    <linearGradient id="dice" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#fde68a"/>
-      <stop offset="100%" stop-color="#d97706"/>
-    </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.5"/>
+    <radialGradient id="bg" cx="40%" cy="30%" r="85%">
+      <stop offset="0" stop-color="#5a3a24"/>
+      <stop offset="0.6" stop-color="#36231a"/>
+      <stop offset="1" stop-color="#1c120b"/>
+    </radialGradient>
+    <filter id="wood" x="0" y="0" width="512" height="512" filterUnits="userSpaceOnUse">
+      <feTurbulence type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="3" seed="11"/>
+      <feColorMatrix values="0 0 0 0 0.95  0 0 0 0 0.75  0 0 0 0 0.5  1.3 0 0 0 -0.55"/>
     </filter>
+    <linearGradient id="die" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0604f"/>
+      <stop offset="1" stop-color="#a8231a"/>
+    </linearGradient>
+    <filter id="grain" x="0" y="0" width="100" height="100" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035 0.42" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.5 0 0 0 -0.6" result="g"/>
+      <feComposite in="g" in2="SourceGraphic" operator="in" result="gm"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="gm"/></feMerge>
+    </filter>
+    <linearGradient id="shade" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.45"/>
+      <stop offset="0.45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.3"/>
+    </linearGradient>
+    <filter id="drop" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+    <path id="mp" d="M50 6C40 6 34 13 34 22C34 28 37 32 40 35C28 37 14 41 8 47C3 52 5 59 13 60C20 61 26 62 31 63C27 71 21 81 18 88C16 94 19 96 25 96L41 96C45 96 47 93 48 90L50 84L52 90C53 93 55 96 59 96L75 96C81 96 84 94 82 88C79 81 73 71 69 63C74 62 80 61 87 60C95 59 97 52 92 47C86 41 72 37 60 35C63 32 66 28 66 22C66 13 60 6 50 6Z"/>
   </defs>
-  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
-  <rect x="76" y="76" width="360" height="360" rx="56" fill="url(#dice)" filter="url(#shadow)"/>
-  <circle cx="174" cy="174" r="30" fill="#1a0f00" opacity="0.85"/>
-  <circle cx="338" cy="174" r="30" fill="#1a0f00" opacity="0.85"/>
-  <circle cx="174" cy="256" r="30" fill="#1a0f00" opacity="0.85"/>
-  <circle cx="338" cy="256" r="30" fill="#1a0f00" opacity="0.85"/>
-  <circle cx="174" cy="338" r="30" fill="#1a0f00" opacity="0.85"/>
-  <circle cx="338" cy="338" r="30" fill="#1a0f00" opacity="0.85"/>
+  <!-- Walnut tile -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" filter="url(#wood)" opacity="0.35"/>
+  <rect x="22" y="22" width="468" height="468" rx="92" fill="none" stroke="#e2b551" stroke-opacity="0.55" stroke-width="8"/>
+  <!-- Red d6 behind -->
+  <g transform="translate(318 300) rotate(14)" filter="url(#drop)">
+    <rect x="-92" y="-92" width="184" height="184" rx="34" fill="url(#die)" stroke="#000" stroke-width="10"/>
+    <rect x="-92" y="-92" width="184" height="184" rx="34" fill="url(#shade)"/>
+    <g fill="#fff5ea">
+      <circle cx="-46" cy="-46" r="17"/><circle cx="46" cy="-46" r="17"/>
+      <circle cx="0" cy="0" r="17"/>
+      <circle cx="-46" cy="46" r="17"/><circle cx="46" cy="46" r="17"/>
+    </g>
+  </g>
+  <!-- Wooden meeple in front -->
+  <g transform="translate(62 96) scale(2.95)" filter="url(#drop)">
+    <use href="#mp" fill="#f2b134" filter="url(#grain)"/>
+    <use href="#mp" fill="url(#shade)"/>
+    <use href="#mp" fill="none" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+  </g>
 </svg>
