@@ -1,4 +1,4 @@
-const CACHE = 'gamebuddy-v4';
+const CACHE = 'gamebuddy-v5';
 const ASSETS = [
     './index.html',
     './manifest.json',
