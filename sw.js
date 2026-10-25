@@ -1,4 +1,4 @@
-const CACHE = 'gamebuddy-v3';
+const CACHE = 'gamebuddy-v4';
 const ASSETS = [
     './index.html',
     './manifest.json',
@@ -22,17 +22,24 @@ self.addEventListener('activate', e => {
     );
 });
 
+function networkFirst(request) {
+    return fetch(request).then(res => {
+        if (res && res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE).then(c => c.put(request, clone));
+        }
+        return res;
+    }).catch(() => caches.match(request).then(r => r || caches.match('./index.html')));
+}
+
 self.addEventListener('fetch', e => {
-    // Network-first for Google Fonts, cache-first for everything else
+    if (e.request.method !== 'GET') return;
+    // Network-first for the app page (so updates show up right away) and Google Fonts;
+    // cache-first for everything else
     const url = e.request.url;
-    if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
-        e.respondWith(
-            fetch(e.request).then(res => {
-                const clone = res.clone();
-                caches.open(CACHE).then(c => c.put(e.request, clone));
-                return res;
-            }).catch(() => caches.match(e.request))
-        );
+    if (e.request.mode === 'navigate' || url.endsWith('/index.html') ||
+        url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
+        e.respondWith(networkFirst(e.request));
     } else {
         e.respondWith(
             caches.match(e.request).then(cached => cached || fetch(e.request))
