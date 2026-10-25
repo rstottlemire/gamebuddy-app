@@ -389,8 +389,8 @@
             color: var(--ink); font-family: 'Fredoka One', cursive; font-size: 0.88rem; box-shadow: 0 2px 0 rgba(0,0,0,0.45);
             transition: transform 0.07s, box-shadow 0.07s, background 0.15s;
         }
-        .dice-btn .die-svg { display: block; margin: 0 auto 4px; width: 32px; height: 32px; color: var(--accent-2); }
-        .dice-btn .die-svg .dnum { fill: var(--accent); font-family: 'Fredoka One', cursive; }
+        .dice-btn .die-svg { display: block; margin: 0 auto 4px; width: 36px; height: 36px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); overflow: visible; }
+        .dice-btn .die-svg .dnum { fill: #fff6e8; font-family: 'Fredoka One', cursive; paint-order: stroke; stroke: rgba(30,12,4,0.65); stroke-width: 2.4px; stroke-linejoin: round; }
         .dice-btn:active { transform: translateY(2px); box-shadow: none; background: var(--accent-soft); }
 
         /* Dice tray: dark velvet with a wood rim */
@@ -424,7 +424,7 @@
         }
         .adv-chip .ic { width: 17px; height: 17px; }
         .adv-chip input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
-        .adv-chip .chk { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid currentColor; display: inline-flex; align-items: center; justify-content: center; }
+        .adv-chip .chk { flex-shrink: 0; width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid currentColor; display: inline-flex; align-items: center; justify-content: center; }
         .adv-chip input:checked + .chk { background: currentColor; }
         .adv-chip input:checked + .chk::after { content: ''; width: 9px; height: 5px; border: solid #1a1006; border-width: 0 0 2.5px 2.5px; transform: rotate(-45deg) translate(1px,-1px); }
         .adv-chip input:focus-visible + .chk { box-shadow: 0 0 0 3px var(--accent-soft); }
@@ -466,8 +466,49 @@
         .dice-result-item.kept { box-shadow: 0 0 0 2.5px var(--brass), 0 0 22px rgba(226,181,81,0.5); }
         .dice-result-item.not-kept, .die-group.not-kept { opacity: 0.48; }
         .kept-tag { font-size: 0.6rem; font-weight: 900; color: var(--brass-light); letter-spacing: 1.2px; margin-top: 2px; }
-        .crit-fail { display: none; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; padding: 10px; border-radius: 12px; font-family: 'Fredoka One', cursive; font-size: 1.35rem; color: #ffb3aa; background: rgba(217,72,59,0.18); border: 1.5px solid var(--red); animation: chipIn 0.3s both; }
-        .crit-fail .ic { width: 26px; height: 26px; }
+        /* Result banner: crit fail, natural 20/1, Savage Worlds success/raises, damage vs Toughness */
+        .dice-banner { display: none; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 12px; padding: 10px 12px; border-radius: 12px; font-family: 'Fredoka One', cursive; font-size: 1.3rem; text-align: center; animation: chipIn 0.3s both; }
+        .dice-banner .ic { width: 26px; height: 26px; }
+        .dice-banner small { display: block; width: 100%; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.8rem; opacity: 0.85; }
+        .dice-banner.bad { color: #ffb3aa; background: rgba(217,72,59,0.18); border: 1.5px solid var(--red); }
+        .dice-banner.good { color: #8ff0bb; background: rgba(76,175,125,0.16); border: 1.5px solid var(--green); }
+        .dice-banner.gold { color: #fff1b8; background: rgba(226,181,81,0.2); border: 1.5px solid var(--brass); text-shadow: 0 0 14px rgba(243,212,136,0.8); }
+        .dice-banner.neutral { color: var(--ink-2); background: rgba(255,235,205,0.06); border: 1.5px solid var(--line-2); }
+
+        /* Dice options: Damage across the top, then two grouped columns */
+        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        .opt-grid .span2 { grid-column: 1 / -1; justify-content: center; }
+        .opt-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .opt-col .adv-chip { padding: 0 10px; gap: 6px; font-size: 0.84rem; }
+        .adv-chip.dmg-chip { border-color: rgba(244,63,94,0.65); color: #fda4af; background: rgba(244,63,94,0.06); }
+
+        /* Modifier / target steppers */
+        .mod-row { display: flex; gap: 10px; margin-bottom: 14px; }
+        .stepper { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+        .stepper .lbl { font-size: 0.66rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.3px; color: var(--ink-2); }
+        .stp { display: flex; align-items: stretch; border-radius: 12px; overflow: hidden; border: 1px solid var(--line-2); background: var(--well); box-shadow: inset 0 2px 5px rgba(0,0,0,0.35); }
+        .stp button { width: 42px; min-height: 44px; border: none; background: rgba(255,235,205,0.04); color: var(--ink); cursor: pointer; display: flex; align-items: center; justify-content: center; touch-action: manipulation; }
+        .stp button .ic { width: 18px; height: 18px; stroke-width: 2.6; }
+        .stp button:active { background: var(--accent-soft); }
+        .stp .val { flex: 1; width: auto; font-family: 'Fredoka One', cursive; font-size: 1.25rem; color: var(--accent); background: transparent; border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+        .stp .val.zero { color: var(--ink-3); }
+        #tnStepper { display: none; }
+        .dice-chip.mod-chip { background: linear-gradient(180deg, #fff1cc, #e2b551); color: #2a1a05; box-shadow: 0 2px 0 #8a6420; padding-right: 12px; }
+
+        /* Characters & roll history */
+        .char-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; scrollbar-width: none; }
+        .char-tabs::-webkit-scrollbar { display: none; }
+        .char-tab { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 20px; cursor: pointer; touch-action: manipulation; border: 1px solid var(--line-2); background: var(--well); color: var(--ink-2); font-weight: 900; font-size: 0.86rem; white-space: nowrap; }
+        .char-tab.on { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: 0 2px 0 var(--accent-sh); }
+        .char-tab .ic { width: 15px; height: 15px; stroke-width: 2.4; }
+        .char-tab.add { border-style: dashed; color: var(--accent); background: transparent; }
+        .hist-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .hist-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
+        .hist-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; background: var(--well); border: 1px solid var(--line); animation: chipIn 0.2s both; }
+        .hist-item .when { color: var(--ink-3); font-size: 0.72rem; font-weight: 800; flex-shrink: 0; width: 42px; }
+        .hist-item .what { flex: 1; min-width: 0; font-weight: 800; font-size: 0.84rem; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .hist-item .res { font-family: 'Fredoka One', cursive; font-size: 1rem; color: var(--ink); text-align: right; max-width: 55%; }
+        .hist-item.bad .res { color: #ff8a7e; } .hist-item.good .res { color: #8ff0bb; } .hist-item.gold .res { color: var(--brass-light); }
         .dice-pair { min-width: 100px; }
         .adv-pair-row { display: flex; gap: 6px; justify-content: center; margin-top: 5px; }
         .adv-die { min-width: 46px; min-height: 46px; padding: 2px 4px; border-radius: 10px; border: 2px solid var(--line-2); display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -702,7 +743,7 @@
         .card-face-front.red-suit { color: #c62828; }
         .card-face-front.black-suit { color: #1a1410; }
         .card-face-front.joker-card { background: linear-gradient(135deg, #fffaf0, #fbe9c6); color: #8a5a12; }
-        .pcf-corner { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
+        .pcf-corner { display: flex; flex-direction: column; align-items: center; align-self: flex-start; line-height: 1.1; }
         .pcf-br { align-self: flex-end; transform: rotate(180deg); }
         .pcf-val { font-family: 'Fredoka One', cursive; font-size: 1.05rem; line-height: 1; }
         .pcf-suit-sm { font-size: 0.74rem; }
@@ -733,7 +774,21 @@
         .round-btn.minus { background: linear-gradient(180deg, #ee7366, #cc3d31); color: #fff; box-shadow: 0 3px 0 #7d1f17; }
         .round-btn.plus { background: linear-gradient(180deg, #7ad6a2, #44a874); color: #04200f; box-shadow: 0 3px 0 #23664a; }
         .round-btn:active { transform: translateY(2px); box-shadow: none; }
-        .hp-read { flex: 1; text-align: center; line-height: 1; }
+        .hp-read { flex: 1; text-align: center; line-height: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: inherit; cursor: pointer; border-radius: 10px; touch-action: manipulation; }
+        .hp-read:active { background: rgba(255,235,205,0.08); }
+        .sw-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+        .sw-grp { display: flex; align-items: center; gap: 5px; }
+        .sw-grp > span { font-size: 0.64rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-3); margin-right: 2px; }
+        .sw-grp b { font-family: 'Fredoka One', cursive; font-weight: normal; font-size: 1.2rem; min-width: 20px; text-align: center; color: var(--brass-light); }
+        .mini-round { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--well); color: var(--ink); cursor: pointer; display: flex; align-items: center; justify-content: center; touch-action: manipulation; }
+        .mini-round .ic { width: 15px; height: 15px; stroke-width: 2.8; }
+        .pip { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line-2); background: var(--well); cursor: pointer; touch-action: manipulation; padding: 0; position: relative; }
+        .pip::after { content: ''; position: absolute; inset: -6px; }
+        .pip.on { background: radial-gradient(circle at 35% 30%, #ff9a8e, #d9483b 60%, #7d1f17); border-color: #7d1f17; }
+        .pip.fat.on { background: radial-gradient(circle at 35% 30%, #c8b2f7, #8b63e0 60%, #4a2d93); border-color: #4a2d93; }
+        .pip.inc { width: auto; height: 26px; padding: 0 8px; border-radius: 13px; font-size: 0.6rem; font-weight: 900; color: var(--ink-3); letter-spacing: 0.5px; }
+        .pip.inc.on { color: #fff; }
+        .sw-pen { font-family: 'Fredoka One', cursive; font-size: 0.95rem; color: #ff8a7e; background: rgba(217,72,59,0.14); padding: 2px 9px; border-radius: 10px; }
         .hp-read b { font-family: 'Fredoka One', cursive; font-weight: normal; font-size: 1.8rem; }
         .hp-read span { color: var(--ink-3); font-size: 0.82rem; font-weight: 800; margin-left: 3px; }
         .step-wrap { display: flex; flex-direction: column; align-items: center; gap: 1px; font-size: 0.6rem; font-weight: 900; color: var(--ink-3); text-transform: uppercase; letter-spacing: 1px; }
@@ -800,6 +855,16 @@
             <feComposite in="g" in2="SourceGraphic" operator="in" result="gm"/>
             <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="gm"/></feMerge>
         </filter>
+
+        <!-- Resin dice colors, following the rainbow of the TTRPG dice photo -->
+        <linearGradient id="rz-4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c3a0ff"/><stop offset="1" stop-color="#5a2fb0"/></linearGradient>
+        <linearGradient id="rz-6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7fae"/><stop offset="1" stop-color="#8e1e4e"/></linearGradient>
+        <linearGradient id="rz-8" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a6b"/><stop offset="1" stop-color="#a51d14"/></linearGradient>
+        <linearGradient id="rz-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffab78"/><stop offset="1" stop-color="#c1461a"/></linearGradient>
+        <linearGradient id="rz-12" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffcf6a"/><stop offset="1" stop-color="#b46b08"/></linearGradient>
+        <linearGradient id="rz-20" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe88f"/><stop offset="1" stop-color="#b8820c"/></linearGradient>
+        <linearGradient id="rz-100" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fa8ff"/><stop offset="1" stop-color="#2d3f9c"/></linearGradient>
+        <linearGradient id="rz-F" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ddcdff"/><stop offset="1" stop-color="#7b52d8"/></linearGradient>
 
         <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 9.5V20h5v-6h4v6h5V9.5"/></symbol>
         <symbol id="i-notes" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3.5"/></symbol>
@@ -1067,26 +1132,40 @@
         <div class="panel-title"><svg class="ic"><use href="#i-d20"/></svg>Dice Roller</div>
         <div class="card">
             <div class="small-label">Tap to add dice</div>
-            <div class="dice-grid">
-                <button class="dice-btn" onclick="addDie(4)"><svg class="die-svg" viewBox="0 0 40 40"><polygon points="20,4 36,34 4,34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><text class="dnum" x="20" y="28" text-anchor="middle" font-size="11">4</text></svg>d4</button>
-                <button class="dice-btn" onclick="addDie(6)"><svg class="die-svg" viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/><text class="dnum" x="20" y="26" text-anchor="middle" font-size="14">6</text></svg>d6</button>
-                <button class="dice-btn" onclick="addDie(8)"><svg class="die-svg" viewBox="0 0 40 40"><polygon points="20,3 37,20 20,37 3,20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M3 20h34" stroke="currentColor" stroke-width="1.3" opacity=".5"/><text class="dnum" x="20" y="25" text-anchor="middle" font-size="13">8</text></svg>d8</button>
-                <button class="dice-btn" onclick="addDie(10)"><svg class="die-svg" viewBox="0 0 40 40"><polygon points="20,3 36,16 20,37 4,16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M4 16l16 6 16-6M20 22v15" stroke="currentColor" stroke-width="1.3" fill="none" opacity=".5"/><text class="dnum" x="20" y="18.5" text-anchor="middle" font-size="9">10</text></svg>d10</button>
-                <button class="dice-btn" onclick="addDie(12)"><svg class="die-svg" viewBox="0 0 40 40"><polygon points="20,3 36,14.5 30,34 10,34 4,14.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><polygon points="20,11 27.5,16.5 24.5,26 15.5,26 12.5,16.5" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".5"/><text class="dnum" x="20" y="23" text-anchor="middle" font-size="8.5">12</text></svg>d12</button>
-                <button class="dice-btn" onclick="addDie(20)"><svg class="die-svg" viewBox="0 0 40 40"><polygon points="20,3 36,12 36,28 20,37 4,28 4,12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><polygon points="20,10 29,25 11,25" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".5"/><text class="dnum" x="20" y="22.5" text-anchor="middle" font-size="8.5">20</text></svg>d20</button>
-                <button class="dice-btn" onclick="addDie(100)"><svg class="die-svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" stroke-width="2.5"/><text class="dnum" x="20" y="24.5" text-anchor="middle" font-size="10">100</text></svg>d100</button>
-                <button class="dice-btn" onclick="addFate()"><svg class="die-svg" viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 20h12M20 14v12" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/></svg>4dF</button>
-            </div>
+            <div class="dice-grid" id="diceGrid"></div>
 
-            <div class="adv-row">
-                <label class="adv-chip" id="wildLabel"><input type="checkbox" id="wildToggle" onchange="diceOpt('wild',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-wild"/></svg>Wild Card</label>
-                <label class="adv-chip" id="explodingLabel"><input type="checkbox" id="explodingToggle" onchange="diceOpt('explode',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-burst"/></svg>Exploding<svg class="ic lock-ico"><use href="#i-lock"/></svg></label>
-                <label class="adv-chip" id="damageLabel"><input type="checkbox" id="damageToggle" onchange="diceOpt('damage',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-sword"/></svg>Damage</label>
-                <label class="adv-chip" id="advLabel"><input type="checkbox" id="advToggle" onchange="diceOpt('adv',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-up"/></svg>Advantage</label>
-                <label class="adv-chip" id="disadvLabel"><input type="checkbox" id="disadvToggle" onchange="diceOpt('disadv',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-down"/></svg>Disadvantage</label>
+            <div class="opt-grid">
+                <label class="adv-chip dmg-chip span2" id="damageLabel"><input type="checkbox" id="damageToggle" onchange="diceOpt('damage',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-sword"/></svg>Damage roll</label>
+                <div class="opt-col">
+                    <label class="adv-chip" id="advLabel"><input type="checkbox" id="advToggle" onchange="diceOpt('adv',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-up"/></svg>Advantage</label>
+                    <label class="adv-chip" id="disadvLabel"><input type="checkbox" id="disadvToggle" onchange="diceOpt('disadv',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-down"/></svg>Disadvantage</label>
+                </div>
+                <div class="opt-col">
+                    <label class="adv-chip" id="wildLabel"><input type="checkbox" id="wildToggle" onchange="diceOpt('wild',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-wild"/></svg>Wild Card</label>
+                    <label class="adv-chip" id="explodingLabel"><input type="checkbox" id="explodingToggle" onchange="diceOpt('explode',this.checked)"><span class="chk"></span><svg class="ic"><use href="#i-burst"/></svg>Exploding<svg class="ic lock-ico"><use href="#i-lock"/></svg></label>
+                </div>
             </div>
             <div class="lock-note" id="wildNote"><svg class="ic"><use href="#i-lock"/></svg><span>Exploding is required by Wild Card. Advantage/Disadvantage are off while Wild Card is on.</span></div>
             <div class="lock-note dmg-note" id="dmgNote"><svg class="ic"><use href="#i-sword"/></svg><span>Damage roll: every die is added together. Your other settings come back after this roll.</span></div>
+
+            <div class="mod-row">
+                <div class="stepper">
+                    <span class="lbl">Modifier</span>
+                    <div class="stp">
+                        <button onclick="stepMod(-1)" aria-label="Lower modifier"><svg class="ic"><use href="#i-minus"/></svg></button>
+                        <button class="val" id="modVal" onclick="editMod()">+0</button>
+                        <button onclick="stepMod(1)" aria-label="Raise modifier"><svg class="ic"><use href="#i-plus"/></svg></button>
+                    </div>
+                </div>
+                <div class="stepper" id="tnStepper">
+                    <span class="lbl" id="tnLabel">Target</span>
+                    <div class="stp">
+                        <button onclick="stepTn(-1)" aria-label="Lower target"><svg class="ic"><use href="#i-minus"/></svg></button>
+                        <button class="val" id="tnVal" onclick="editTn()">4</button>
+                        <button onclick="stepTn(1)" aria-label="Raise target"><svg class="ic"><use href="#i-plus"/></svg></button>
+                    </div>
+                </div>
+            </div>
 
             <div class="small-label">Dice tray</div>
             <div class="tray"><div class="dice-queue" id="diceQueue"></div></div>
@@ -1098,15 +1177,24 @@
 
         <div class="card" id="diceResultsCard" style="display:none;">
             <div class="small-label">Results</div>
-            <div class="crit-fail" id="diceCrit"><svg class="ic"><use href="#i-skull"/></svg>Critical Failure!</div>
+            <div class="dice-banner" id="diceBanner"></div>
             <div class="tray"><div class="dice-results" id="diceResults"></div></div>
             <div class="dice-total" id="diceTotal"></div>
         </div>
 
         <div class="card">
-            <div class="small-label">Presets</div>
+            <div class="small-label">Characters &amp; presets</div>
+            <div class="char-tabs" id="charTabs"></div>
             <div class="preset-list" id="presetsList"></div>
-            <button class="btn btn-ghost btn-sm" onclick="savePreset()"><svg class="ic"><use href="#i-save"/></svg>Save tray as preset</button>
+            <button class="btn btn-ghost btn-sm" onclick="savePreset()"><svg class="ic"><use href="#i-save"/></svg><span id="savePresetLabel">Save tray as preset</span></button>
+        </div>
+
+        <div class="card">
+            <div class="hist-head">
+                <div class="small-label" style="flex:1;margin:0;">Roll history</div>
+                <button class="btn btn-ghost btn-sm" onclick="clearHistory()"><svg class="ic"><use href="#i-eraser"/></svg>Clear</button>
+            </div>
+            <div class="hist-list" id="rollHist"></div>
         </div>
     </div>
 
@@ -1120,13 +1208,19 @@
                 <input type="number" id="combatHpInput" placeholder="Max HP" min="1" inputmode="numeric">
                 <button class="btn btn-primary" onclick="addCombatant()"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
             </div>
-            <div style="margin-top:12px;">
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:2px;">
                 <label class="toggle-switch">
                     <input type="checkbox" id="combatGMToggle" checked onchange="setCombatMode('gm', this.checked)">
                     <span class="toggle-slider"></span>
                     GM mode (track HP)
                 </label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="combatSWToggle" onchange="setCombatMode('sw', this.checked)">
+                    <span class="toggle-slider"></span>
+                    Savage Worlds (Bennies, Wounds, Fatigue)
+                </label>
             </div>
+            <div class="muted-note" style="margin-top:6px;">Tap a combatant&rsquo;s HP to type damage or healing.</div>
         </div>
 
         <div class="card round-bar" id="combatRoundBar" style="display:none;">
@@ -1448,14 +1542,15 @@ function uiDialog(o){
         const box=document.getElementById('dlgBox');
         box.innerHTML=(o.title?`<div class="dlg-title">${o.title}</div>`:'')
             +(o.msg?`<div class="dlg-msg">${o.msg}</div>`:'')
-            +(o.input?`<input type="text" id="dlgIn" maxlength="40" autocomplete="off" enterkeyhint="done" placeholder="${esc(o.placeholder||'')}" value="${esc(o.value||'')}">`:'')
-            +`<div class="dlg-btns${btns.length>2?' stack':''}">${btns.map((b,i)=>`<button class="btn ${b.cls||'btn-ghost'}" data-i="${i}">${b.label}</button>`).join('')}</div>`;
+            +(o.input?`<input type="text" id="dlgIn" maxlength="40" autocomplete="off" enterkeyhint="done" ${o.numeric?'inputmode="numeric" pattern="[0-9]*"':''} placeholder="${esc(o.placeholder||'')}" value="${esc(o.value||'')}">`:'')
+            +`<div class="dlg-btns${btns.length>2&&!o.row?' stack':''}">${btns.map((b,i)=>`<button class="btn ${b.cls||'btn-ghost'}" data-i="${i}">${b.label}</button>`).join('')}</div>`;
+        // 'INPUT' returns the typed text; 'INPUT:action' returns {act, val} (e.g. Heal vs Damage)
         box.querySelectorAll('.dlg-btns button').forEach(b=>b.addEventListener('click',()=>{
-            const v=btns[+b.dataset.i].value;
-            closeDlg(v==='INPUT'?document.getElementById('dlgIn').value:v);
+            const v=btns[+b.dataset.i].value, txt=document.getElementById('dlgIn')?document.getElementById('dlgIn').value:'';
+            closeDlg(v==='INPUT'?txt:(typeof v==='string'&&v.startsWith('INPUT:'))?{act:v.slice(6),val:txt}:v);
         }));
         const inp=document.getElementById('dlgIn');
-        if(inp) inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); closeDlg(inp.value); } });
+        if(inp) inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); box.querySelector('.dlg-btns button:last-child').click(); } });
         document.getElementById('dlg').classList.add('open');
         clearSelection();
         if(inp){ inp.focus(); inp.select(); }
@@ -2296,9 +2391,37 @@ if(ptSet.flip&&!motionNeedsPerm()) attachMotion();
 let diceQueue=[];
 let userExplode=false, wildMode=false, advMode=false, disadvMode=false;
 let damageMode=false, preDamage=null;
-let currentRolls=[], lastRollWild=false, lastRollDamage=false;
+let currentRolls=[], lastRoll={wild:false,damage:false,mod:0};
+// Modifier, Savage Worlds target number and Toughness (remembered on this phone)
+let diceSet=Object.assign({mod:0,tn:4,tough:5},load('gb-dice-set',{})||{});
+function saveDiceSet(){ store('gb-dice-set',diceSet); }
+function fmtMod(m){ return m>0?`+${m}`:m<0?`−${Math.abs(m)}`:'+0'; }
+
+// Resin dice buttons
+const DICE_TYPES=[4,6,8,10,12,20,100,'F'];
+function dieIconSvg(t){
+    const g=`url(#rz-${t})`, S='stroke="#1a0b06" stroke-width="1.6" stroke-linejoin="round"';
+    const L='fill="rgba(255,255,255,0.24)"', D='fill="rgba(0,0,0,0.22)"', D2='fill="rgba(0,0,0,0.12)"';
+    const num=(txt,y,fs)=>`<text class="dnum" x="20" y="${y}" text-anchor="middle" font-size="${fs}">${txt}</text>`;
+    let body='';
+    if(t===4) body=`<polygon points="20,3 37,34 3,34" fill="${g}" ${S}/><polygon points="20,3 20,34 3,34" ${L}/>${num(4,29,11)}`;
+    else if(t===6) body=`<rect x="5" y="5" width="30" height="30" rx="7" fill="${g}" ${S}/><rect x="9" y="9" width="22" height="22" rx="5" ${L}/>${num(6,25.5,14)}`;
+    else if(t===8) body=`<polygon points="20,2 38,20 20,38 2,20" fill="${g}" ${S}/><polygon points="20,2 38,20 2,20" ${L}/>${num(8,25.5,13)}`;
+    else if(t===10||t===100) body=`<polygon points="20,2 37,16 20,38 3,16" fill="${g}" ${S}/><polygon points="20,2 37,16 20,25 3,16" ${L}/><polygon points="3,16 20,25 20,38" ${D}/><polygon points="37,16 20,25 20,38" ${D2}/>${t===10?num(10,20,9.5):num('%',21,11)}`;
+    else if(t===12) body=`<polygon points="20,2 37,14 31,36 9,36 3,14" fill="${g}" ${S}/><polygon points="20,10 28.5,16 25.5,27 14.5,27 11.5,16" ${L}/>${num(12,24,9)}`;
+    else if(t===20) body=`<polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="${g}" ${S}/><polygon points="4,11 10,26 4,29" ${D}/><polygon points="36,11 30,26 36,29" ${D2}/><polygon points="10,26 30,26 20,38" ${D}/><polygon points="20,9 30,26 10,26" ${L}/>${num(20,23.5,8.5)}`;
+    else body=`<rect x="5" y="5" width="30" height="30" rx="7" fill="${g}" ${S}/><rect x="9" y="9" width="22" height="22" rx="5" ${L}/><path d="M13 20h14M20 13v14" stroke="#fff6e8" stroke-width="3.4" stroke-linecap="round"/>`;
+    return `<svg class="die-svg" viewBox="0 0 40 40" aria-hidden="true">${body}</svg>`;
+}
+function renderDiceGrid(){
+    document.getElementById('diceGrid').innerHTML=DICE_TYPES.map(t=>t==='F'
+        ?`<button class="dice-btn" onclick="addFate()">${dieIconSvg('F')}4dF</button>`
+        :`<button class="dice-btn" onclick="addDie(${t})">${dieIconSvg(t)}d${t}</button>`).join('');
+}
 
 function explodeOn(){ return wildMode||userExplode; }
+// Savage Worlds context for damage: Damage was switched on while Wild Card was on
+function swDamage(){ return damageMode&&!!(preDamage&&preDamage.wild); }
 // Damage is one-shot: it remembers the other settings and restores them after the roll
 function enterDamage(explode){
     if(!damageMode) preDamage={wild:wildMode,explode:userExplode,adv:advMode,disadv:disadvMode};
@@ -2320,18 +2443,45 @@ function diceOpt(type,checked){
     syncDiceToggles();
 }
 function syncDiceToggles(){
-    const set=(inputId,labelId,checked,onCls,stateCls)=>{
+    const set=(inputId,labelId,checked,onCls,stateCls,extra)=>{
         const i=document.getElementById(inputId); i.checked=checked; i.disabled=!!stateCls;
-        document.getElementById(labelId).className='adv-chip'+(checked?' '+onCls:'')+(stateCls?' '+stateCls:'');
+        document.getElementById(labelId).className='adv-chip'+(extra?' '+extra:'')+(checked?' '+onCls:'')+(stateCls?' '+stateCls:'');
     };
     set('wildToggle','wildLabel',wildMode,'wild-on',damageMode?'disabled':'');
     set('explodingToggle','explodingLabel',explodeOn(),'explode-on',wildMode?'locked':'');
-    set('damageToggle','damageLabel',damageMode,'damage-on','');
+    set('damageToggle','damageLabel',damageMode,'damage-on','','dmg-chip span2');
     set('advToggle','advLabel',advMode,'adv-on',wildMode||damageMode?'disabled':'');
     set('disadvToggle','disadvLabel',disadvMode,'disadv-on',wildMode||damageMode?'disabled':'');
     document.getElementById('wildNote').style.display=wildMode?'flex':'none';
     document.getElementById('dmgNote').style.display=damageMode?'flex':'none';
+    renderSteppers();
     renderQueue();
+}
+function renderSteppers(){
+    const mv=document.getElementById('modVal');
+    mv.textContent=fmtMod(diceSet.mod); mv.classList.toggle('zero',!diceSet.mod);
+    const showTn=wildMode||swDamage();
+    document.getElementById('tnStepper').style.display=showTn?'flex':'none';
+    document.getElementById('tnLabel').textContent=swDamage()?'Toughness':'Target';
+    document.getElementById('tnVal').textContent=swDamage()?diceSet.tough:diceSet.tn;
+}
+function stepMod(d){ diceSet.mod=Math.max(-99,Math.min(99,(diceSet.mod||0)+d)); saveDiceSet(); renderSteppers(); renderQueue(); }
+async function editMod(){
+    const v=await uiDialog({title:'Modifier',msg:'Added to the roll. Pick the sign, then type the number.',input:true,numeric:true,value:String(Math.abs(diceSet.mod)||''),placeholder:'e.g. 5',cancel:null,row:true,
+        buttons:[{label:'Cancel',value:null},{label:'− Minus',value:'INPUT:neg',cls:'btn-red'},{label:'+ Plus',value:'INPUT:pos',cls:'btn-primary'}]});
+    if(!v||typeof v!=='object') return;
+    const n=Math.min(99,Math.abs(parseInt(v.val))||0);
+    diceSet.mod=v.act==='neg'?-n:n; saveDiceSet(); renderSteppers(); renderQueue();
+}
+function stepTn(d){
+    const k=swDamage()?'tough':'tn';
+    diceSet[k]=Math.max(1,Math.min(40,(diceSet[k]||4)+d)); saveDiceSet(); renderSteppers();
+}
+async function editTn(){
+    const k=swDamage()?'tough':'tn';
+    const v=await uiPrompt('',{title:k==='tough'?'Toughness':'Target number',value:String(diceSet[k]),ok:'Set'});
+    if(v===null) return;
+    const n=parseInt(v); if(n>0){ diceSet[k]=Math.min(40,n); saveDiceSet(); renderSteppers(); }
 }
 
 function addDie(s){ diceQueue.push(s); renderQueue(); }
@@ -2341,9 +2491,10 @@ function clearDice(){ diceQueue=[]; currentRolls=[]; renderQueue(); document.get
 
 function renderQueue(){
     const el=document.getElementById('diceQueue');
+    const modChip=diceSet.mod?`<div class="dice-chip mod-chip">${fmtMod(diceSet.mod)}</div>`:'';
     if(!diceQueue.length){ el.innerHTML=`<span class="queue-hint">Tap dice above to add them to the tray${wildMode?' (a Wild d6 is added automatically)':''}</span>`; return; }
     el.innerHTML=diceQueue.map((s,i)=>`<div class="dice-chip${s==='F'?' fate-chip':''}">${s==='F'?'dF':'d'+s}<button class="dice-chip-remove" onclick="removeDie(${i})" aria-label="Remove">${ic('x')}</button></div>`).join('')
-        +(wildMode?'<div class="dice-chip wild-chip">Wild d6</div>':'');
+        +(wildMode?'<div class="dice-chip wild-chip">Wild d6</div>':'')+modChip;
 }
 
 function fateValueHtml(v, sizeCls){
@@ -2358,6 +2509,8 @@ function natCls(r,rolls){ return rolls[0]===r.s?'max':rolls[0]===1?'min':''; }
 function dieTileHtml(r,i,delay){
     const isFate=r.s==='F';
     const label=r.wild?'Wild d6':isFate?'dF':`d${r.s}`;
+    // With Wild Card, the modifier applies to each die before comparing
+    const modLine=r.mod?` ${fmtMod(r.mod)} = ${r.v+r.mod}`:'';
 
     if(r.isAdv||r.isDisadv){
         const keptCls=r.isAdv?'kept-adv':'kept-disadv';
@@ -2381,7 +2534,7 @@ function dieTileHtml(r,i,delay){
         if(r.wild) gcls+=' wild-die';
         if(r.kept===true) gcls+=' kept';
         if(r.kept===false) gcls+=' not-kept';
-        return `<div id="die-${i}" class="${gcls}" style="animation-delay:${delay}ms"><div class="dg-row">${tiles}</div><div class="dg-sum">= ${r.v}</div>${r.kept===true?'<div class="kept-tag">KEPT</div>':''}</div>`;
+        return `<div id="die-${i}" class="${gcls}" style="animation-delay:${delay}ms"><div class="dg-row">${tiles}</div><div class="dg-sum">= ${r.v}${modLine}</div>${r.kept===true?'<div class="kept-tag">KEPT</div>':''}</div>`;
     }
 
     const valHtml=isFate?fateValueHtml(r.v):`<div class="dice-result-value ${natCls(r,r.rolls)}">${r.v}</div>`;
@@ -2392,33 +2545,42 @@ function dieTileHtml(r,i,delay){
     return `<div id="die-${i}" class="${cls}" style="animation-delay:${delay}ms">
         <div class="dice-result-label">${label}</div>
         ${valHtml}
+        ${r.mod?`<div class="chain">${fmtMod(r.mod)} = ${r.v+r.mod}</div>`:''}
         ${r.kept===true?'<div class="kept-tag">KEPT</div>':''}
     </div>`;
 }
 
+// Returns the plain-text total (also used for roll history), or '' when there isn't one
 function updateDiceTotal(){
     const tot=document.getElementById('diceTotal');
     const numRolls=currentRolls.filter(r=>r.s!=='F');
     const fateRolls=currentRolls.filter(r=>r.s==='F');
+    const mod=lastRoll.mod;
     // Wild Card rolls highlight the kept dice instead of showing a sum
-    const showNum=!lastRollWild&&(lastRollDamage?numRolls.length>0:(numRolls.length>1||numRolls.some(r=>r.rolls&&r.rolls.length>1)));
+    const showNum=!lastRoll.wild&&numRolls.length>0&&(lastRoll.damage||mod!==0||numRolls.length>1||numRolls.some(r=>r.rolls&&r.rolls.length>1));
+    const fateOnly=!numRolls.length&&fateRolls.length>0;
     const showFate=fateRolls.length>0;
-    if(!showNum&&!showFate){ tot.style.display='none'; return; }
-    let html='';
+    if(!showNum&&!showFate){ tot.style.display='none'; return ''; }
+    let html='', text='';
     if(showNum){
-        const s=numRolls.reduce((a,r)=>a+r.v,0);
+        const s=numRolls.reduce((a,r)=>a+r.v,0), t=s+mod;
         const boom=numRolls.reduce((a,r)=>a+(r.rolls?r.rolls.length-1:0),0);
-        html+=lastRollDamage?`<span style="color:#fda4af;display:inline-flex;align-items:center;gap:6px;">${ic('sword')}Damage:</span> <span style="color:#fda4af">${s}</span>`:`Total: <span style="color:var(--brass-light)">${s}</span>`;
+        html+=lastRoll.damage?`<span style="color:#fda4af;display:inline-flex;align-items:center;gap:6px;">${ic('sword')}Damage:</span> <span style="color:#fda4af">${t}</span>`:`Total: <span style="color:var(--brass-light)">${t}</span>`;
+        if(mod) html+=` <span class="muted">(${s} ${fmtMod(mod)})</span>`;
         if(boom>0) html+=` <span class="muted">(${boom}${ic('burst')})</span>`;
+        text=(lastRoll.damage?'Damage ':'Total ')+t;
     }
     if(showFate){
         if(html) html+='<span class="muted">&middot;</span>';
-        const net=fateRolls.reduce((a,r)=>a+r.v,0);
+        const net=fateRolls.reduce((a,r)=>a+r.v,0)+(fateOnly?mod:0);
         const ns=net>0?`+${net}`:String(net);
         const nc=net>0?'#7ff0ae':net<0?'#ff7d70':'var(--ink-3)';
         html+=`Fate: <span style="color:${nc}">${ns}</span>`;
+        if(fateOnly&&mod) html+=` <span class="muted">(skill ${fmtMod(mod)})</span>`;
+        text+=(text?' · ':'')+'Fate '+ns;
     }
     tot.innerHTML=html; tot.style.display='flex';
+    return text;
 }
 
 // Roll one die; exploding dice keep rolling (and adding) while they hit max
@@ -2427,10 +2589,23 @@ function rollDie(s,explode){
     while(explode&&s>1&&rolls[rolls.length-1]===s&&rolls.length<30) rolls.push(rand(s));
     return {rolls,total:rolls.reduce((a,b)=>a+b,0)};
 }
+// Savage Worlds: success at the target number, one raise per 4 points over it
+function swOutcome(total,tn){
+    if(total<tn) return {ok:false,raises:0,text:'Failure'};
+    const raises=Math.floor((total-tn)/4);
+    return {ok:true,raises,text:raises?`Success + ${raises} Raise${raises>1?'s':''}`:'Success'};
+}
+function diceDesc(){
+    const counts=[]; diceQueue.forEach(s=>{ const c=counts.find(x=>x.s===s); if(c) c.n++; else counts.push({s,n:1}); });
+    let d=counts.map(c=>c.s==='F'?`${c.n}dF`:`${c.n>1?c.n:''}d${c.s}`).join(' + ');
+    if(diceSet.mod) d+=' '+fmtMod(diceSet.mod);
+    const tags=[]; if(wildMode) tags.push('Wild'); if(damageMode) tags.push('Dmg'); if(advMode) tags.push('Adv'); if(disadvMode) tags.push('Dis');
+    return d+(tags.length?` · ${tags.join(', ')}`:'');
+}
 
 function rollDice(){
     if(!diceQueue.length) return;
-    const ex=explodeOn();
+    const ex=explodeOn(), mod=diceSet.mod||0, desc=diceDesc(), swDmg=swDamage();
     currentRolls=diceQueue.map(s=>{
         if(s==='F'){
             const v=randFate();
@@ -2452,9 +2627,10 @@ function rollDice(){
         return{s,v:a.total,rolls:a.rolls};
     });
 
-    let crit=false;
+    let crit=false, banner=null;
     if(wildMode){
-        // Savage Worlds: the Wild Die replaces the lowest trait die if it rolled higher
+        // Savage Worlds: the Wild Die replaces the lowest trait die if it rolled higher.
+        // The modifier applies to every die equally, so it doesn't change which dice are kept.
         const w=rollDie(6,true);
         const wild={s:6,v:w.total,rolls:w.rolls,wild:true};
         const trait=currentRolls.filter(r=>r.s!=='F');
@@ -2466,53 +2642,136 @@ function rollDice(){
             crit=wild.rolls[0]===1&&ones*2>=trait.length;
         } else wild.kept=true;
         currentRolls.push(wild);
+        if(mod) currentRolls.forEach(r=>{ if(r.s!=='F') r.mod=mod; });
+        if(crit) banner={cls:'bad',html:`${ic('skull')}Critical Failure!`,text:'Critical Failure'};
+        else {
+            const kept=currentRolls.filter(r=>r.kept&&r.s!=='F');
+            const outs=kept.map(r=>({r,o:swOutcome(r.v+mod,diceSet.tn)}));
+            if(outs.length===1){ const o=outs[0].o; banner={cls:o.ok?'good':'neutral',html:o.text+`<small>vs Target ${diceSet.tn}</small>`,text:o.text}; }
+            else if(outs.length>1){
+                const hits=outs.filter(x=>x.o.ok).length;
+                banner={cls:hits?'good':'neutral',html:`${hits} hit${hits!==1?'s':''}<small>${outs.map(x=>`${x.r.wild?'Wild':'d'+x.r.s} ${x.r.v+mod}: ${x.o.text}`).join(' · ')} (vs ${diceSet.tn})</small>`,text:`${hits} hit${hits!==1?'s':''}`};
+            }
+        }
     }
 
-    lastRollWild=wildMode; lastRollDamage=damageMode;
+    lastRoll={wild:wildMode,damage:damageMode,mod};
     const card=document.getElementById('diceResultsCard');
     card.style.display='block';
-    document.getElementById('diceCrit').style.display=crit?'flex':'none';
     document.getElementById('diceResults').innerHTML=currentRolls.map((r,i)=>dieTileHtml(r,i,i*55)).join('');
-    updateDiceTotal();
+    const totalText=updateDiceTotal();
+
+    // Damage vs Toughness (Savage Worlds): success = Shaken, each raise = a Wound
+    if(damageMode&&swDmg){
+        const dmg=currentRolls.filter(r=>r.s!=='F').reduce((a,r)=>a+r.v,0)+mod, T=diceSet.tough;
+        if(dmg<T) banner={cls:'neutral',html:`No effect<small>${dmg} vs Toughness ${T}</small>`,text:'No effect'};
+        else { const raises=Math.floor((dmg-T)/4); const t=raises?`${raises} Wound${raises>1?'s':''} + Shaken`:'Shaken'; banner={cls:'good',html:`${t}<small>${dmg} vs Toughness ${T}</small>`,text:t}; }
+    }
+    // Natural 20 / natural 1 on a single d20 (D&D style)
+    const numeric=currentRolls.filter(r=>r.s!=='F');
+    if(!banner&&!wildMode&&numeric.length===1&&numeric[0].s===20){
+        const nat=numeric[0].rolls[0];
+        if(nat===20) banner={cls:'gold',html:`${ic('crown')}Natural 20!`,text:'Nat 20'};
+        else if(nat===1) banner={cls:'bad',html:`${ic('skull')}Natural 1`,text:'Nat 1'};
+    }
+    const b=document.getElementById('diceBanner');
+    if(banner){ b.className='dice-banner '+banner.cls; b.innerHTML=banner.html; b.style.display='flex'; } else b.style.display='none';
+
+    // Roll history
+    let resText=banner?banner.text:totalText;
+    if(banner&&totalText&&!wildMode) resText=`${totalText} · ${banner.text}`;
+    if(!resText) resText=currentRolls.map(r=>r.s==='F'?(r.v>0?'+':r.v<0?'−':'0'):r.v).join(', ');
+    addHistory(desc,resText,banner?banner.cls:'');
+
     tone(300+Math.random()*80,0,0.05,0.12); tone(260+Math.random()*60,0.07,0.05,0.1);
     if(crit) vibrate([200,100,200]); else vibrate(15);
     if(damageMode){ exitDamage(); syncDiceToggles(); }
 }
 
 // ============================================================
-//  DICE PRESETS
+//  ROLL HISTORY
 // ============================================================
-const PRESETS_KEY='gamebuddy-dice-presets';
-let dicePresets=[];
+let rollHist=load('gb-roll-hist',[])||[];
+function addHistory(d,r,cls){
+    rollHist.unshift({t:Date.now(),d,r,c:cls||''});
+    if(rollHist.length>30) rollHist.length=30;
+    store('gb-roll-hist',rollHist); renderHistory();
+}
+function renderHistory(){
+    const el=document.getElementById('rollHist');
+    if(!rollHist.length){ el.innerHTML='<span class="roster-empty">Your rolls will show up here.</span>'; return; }
+    el.innerHTML=rollHist.map(h=>{
+        const tm=new Date(h.t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+        return `<div class="hist-item ${h.c}"><span class="when">${tm}</span><span class="what">${esc(h.d)}</span><span class="res">${esc(h.r)}</span></div>`;
+    }).join('');
+}
+async function clearHistory(){
+    if(!rollHist.length) return;
+    if(!await uiConfirm('',{title:'Clear roll history?',ok:'Clear',danger:true})) return;
+    rollHist=[]; store('gb-roll-hist',rollHist); renderHistory();
+}
 
-function loadPresets(){
-    try{ dicePresets=JSON.parse(localStorage.getItem(PRESETS_KEY))||[]; }catch(e){ dicePresets=[]; }
+// ============================================================
+//  CHARACTERS & DICE PRESETS
+// ============================================================
+const PRESETS_KEY='gamebuddy-dice-presets';   // pre-character presets, migrated once
+let diceChars=load('gb-dice-chars',null);
+function saveChars(){ store('gb-dice-chars',diceChars); }
+if(!diceChars||!Array.isArray(diceChars.chars)||!diceChars.chars.length){
+    const old=load(PRESETS_KEY,[])||[];
+    diceChars={chars:[{id:'ch'+uid(),name:'My Presets',presets:Array.isArray(old)?old:[]}]};
+    diceChars.cur=diceChars.chars[0].id; saveChars();
+}
+function curChar(){ return diceChars.chars.find(c=>c.id===diceChars.cur)||diceChars.chars[0]; }
+function renderChars(){
+    const cur=curChar();
+    document.getElementById('charTabs').innerHTML=diceChars.chars.map(c=>`<button class="char-tab${c.id===cur.id?' on':''}" onclick="${c.id===cur.id?'charMenu()':`pickChar('${c.id}')`}">${esc(c.name)}${c.id===cur.id?ic('edit'):''}</button>`).join('')
+        +`<button class="char-tab add" onclick="addChar()">${ic('plus')}Character</button>`;
+    document.getElementById('savePresetLabel').textContent=`Save tray to ${cur.name}`;
     renderPresets();
+}
+function pickChar(id){ diceChars.cur=id; saveChars(); renderChars(); }
+async function addChar(){
+    const n=await uiPrompt('Each character keeps their own presets.',{title:'New character',placeholder:'e.g. Thorin',ok:'Add'});
+    if(!n||!n.trim()) return;
+    const c={id:'ch'+uid(),name:n.trim().slice(0,24),presets:[]};
+    diceChars.chars.push(c); diceChars.cur=c.id; saveChars(); renderChars();
+}
+async function charMenu(){
+    const c=curChar();
+    const a=await uiDialog({title:esc(c.name),msg:`${c.presets.length} preset${c.presets.length!==1?'s':''}`,cancel:null,
+        buttons:[{label:'Rename',value:'rename',cls:'btn-primary'},{label:'Delete',value:'delete',cls:'btn-red'},{label:'Cancel',value:null}]});
+    if(a==='rename'){
+        const n=await uiPrompt('',{title:'Rename character',value:c.name});
+        if(n&&n.trim()){ c.name=n.trim().slice(0,24); saveChars(); renderChars(); }
+    } else if(a==='delete'){
+        if(!await uiConfirm(c.presets.length?'Their presets will be deleted too.':'',{title:`Delete “${esc(c.name)}”?`,ok:'Delete',danger:true})) return;
+        diceChars.chars=diceChars.chars.filter(x=>x.id!==c.id);
+        if(!diceChars.chars.length) diceChars.chars.push({id:'ch'+uid(),name:'My Presets',presets:[]});
+        diceChars.cur=diceChars.chars[0].id; saveChars(); renderChars();
+    }
 }
 async function savePreset(){
     if(!diceQueue.length){ uiAlert('Add dice to the tray first!'); return; }
-    const name=await uiPrompt('',{title:'Name this preset',placeholder:damageMode?'e.g. Longsword damage':'e.g. Fighting'});
+    const name=await uiPrompt('',{title:`Preset for ${esc(curChar().name)}`,placeholder:damageMode?'e.g. Longsword damage':'e.g. Fighting'});
     if(!name||!name.trim()) return;
-    dicePresets.push(damageMode?{name:name.trim(),dice:[...diceQueue],damage:true,explode:userExplode}:{name:name.trim(),dice:[...diceQueue],wild:wildMode});
-    store(PRESETS_KEY,dicePresets);
-    renderPresets();
+    const p={name:name.trim(),dice:[...diceQueue],mod:diceSet.mod||0};
+    if(damageMode){ p.damage=true; p.explode=userExplode; p.sw=swDamage(); } else p.wild=wildMode;
+    curChar().presets.push(p); saveChars(); renderPresets();
 }
-function deletePreset(i){
-    dicePresets.splice(i,1);
-    store(PRESETS_KEY,dicePresets);
-    renderPresets();
-}
+function deletePreset(i){ curChar().presets.splice(i,1); saveChars(); renderPresets(); }
 function rollPreset(i){
-    const p=dicePresets[i]; if(!p) return;
-    if(p.damage) enterDamage(!!p.explode);
+    const p=curChar().presets[i]; if(!p) return;
+    if(p.damage){ exitDamage(); if(p.sw){ wildMode=true; advMode=false; disadvMode=false; } enterDamage(!!p.explode); }
     else { exitDamage(); wildMode=!!p.wild; if(wildMode){ advMode=false; disadvMode=false; } }
+    diceSet.mod=p.mod||0; saveDiceSet();
     diceQueue=[...p.dice]; syncDiceToggles(); rollDice();
 }
 function renderPresets(){
-    const el=document.getElementById('presetsList');
-    if(!dicePresets.length){ el.innerHTML='<span class="roster-empty">No presets saved yet.</span>'; return; }
-    el.innerHTML=dicePresets.map((p,i)=>{
-        const label=p.dice.map(d=>d==='F'?'dF':'d'+d).join('+')+(p.wild?' +Wild':'')+(p.damage?' dmg':'');
+    const el=document.getElementById('presetsList'), ps=curChar().presets;
+    if(!ps.length){ el.innerHTML='<span class="roster-empty">No presets yet. Fill the tray, then save it here.</span>'; return; }
+    el.innerHTML=ps.map((p,i)=>{
+        const label=p.dice.map(d=>d==='F'?'dF':'d'+d).join('+')+(p.mod?' '+fmtMod(p.mod):'')+(p.wild?' +Wild':'')+(p.damage?' dmg':'');
         return `<div class="preset-pill">
             <button class="preset-roll-btn" onclick="rollPreset(${i})">${ic(p.damage?'sword':p.wild?'wild':'d20')}${esc(p.name)} <small>${label}</small></button>
             <button class="preset-del-btn" onclick="deletePreset(${i})" aria-label="Delete preset">${ic('x')}</button>
@@ -2785,12 +3044,46 @@ function updateCardUI(){
 const CONDITIONS=['Poisoned','Stunned','Prone','Invisible','Blinded','Frightened','Concentrating'];
 const combatColors=['#e5473a','#3d8fe0','#f2b134','#4caf7d','#b294f2','#ff7a45','#13a3a3','#f272aa'];
 let combatants=[], combatRound=1, combatActiveTurn=0;
-let combatGMMode=true;
+let combatGMMode=true, combatSW=false;
+
+// Combat is saved on this phone so closing the app mid-fight loses nothing
+function saveCombat(){ store('gb-combat',{list:combatants,round:combatRound,turn:combatActiveTurn,gm:combatGMMode,sw:combatSW}); }
+function loadCombat(){
+    const s=load('gb-combat',null);
+    if(s&&Array.isArray(s.list)){
+        combatants=s.list.map(c=>Object.assign({bennies:3,wounds:0,fatigue:0,conditions:[],step:1,damageDealt:0},c));
+        combatRound=s.round||1; combatActiveTurn=Math.min(s.turn||0,Math.max(0,combatants.length-1));
+        combatGMMode=s.gm!==false; combatSW=!!s.sw;
+    }
+    document.getElementById('combatGMToggle').checked=combatGMMode;
+    document.getElementById('combatSWToggle').checked=combatSW;
+    document.getElementById('combatRoundNum').textContent=combatRound;
+    document.getElementById('combatRoundBar').style.display=combatants.length?'flex':'none';
+    document.getElementById('combatEmptyCard').style.display=combatants.length?'none':'block';
+    renderCombat();
+}
 
 function setCombatMode(type, val){
     if(type==='gm') combatGMMode=val;
+    else if(type==='sw') combatSW=val;
     renderCombat();
 }
+// Tap the HP number to type an amount: Damage or Heal (or add damage dealt)
+async function hpEdit(i){
+    const c=combatants[i]; if(!c) return;
+    const r=await uiDialog({title:esc(c.name),msg:combatGMMode?`HP ${c.hp} / ${c.maxHp}`:`Damage dealt: ${c.damageDealt}`,input:true,numeric:true,placeholder:'Amount',cancel:null,row:true,
+        buttons:combatGMMode
+            ?[{label:'Cancel',value:null},{label:'Heal',value:'INPUT:heal',cls:'btn-green'},{label:'Damage',value:'INPUT:dmg',cls:'btn-red'}]
+            :[{label:'Cancel',value:null},{label:'Add damage',value:'INPUT:add',cls:'btn-primary'}]});
+    if(!r||typeof r!=='object') return;
+    const n=Math.abs(parseInt(r.val))||0; if(!n||!combatants[i]) return;
+    if(combatGMMode) c.hp=Math.max(0,Math.min(c.maxHp,c.hp+(r.act==='heal'?n:-n)));
+    else c.damageDealt+=n;
+    renderCombat();
+}
+function swAdj(i,k,d){ const c=combatants[i]; if(!c) return; c[k]=Math.max(0,Math.min(99,(c[k]||0)+d)); renderCombat(); }
+// Tapping a filled pip clears it (and those after it); tapping an empty pip fills up to it
+function swSet(i,k,n){ const c=combatants[i]; if(!c) return; c[k]=(c[k]||0)>=n?n-1:n; renderCombat(); }
 
 function addCombatant(){
     const nameEl=document.getElementById('combatNameInput');
@@ -2801,7 +3094,8 @@ function addCombatant(){
     const maxHp=Math.max(1,parseInt(hpEl.value)||20);
     combatants.push({
         name, initiative, maxHp, hp:maxHp, damageDealt:0,
-        conditions:[], color:combatColors[combatants.length%combatColors.length], step:1
+        conditions:[], color:combatColors[combatants.length%combatColors.length], step:1,
+        bennies:3, wounds:0, fatigue:0
     });
     combatants.sort((a,b)=>b.initiative-a.initiative);
     nameEl.value=''; initEl.value=''; hpEl.value='';
@@ -2866,6 +3160,7 @@ function resetCombat(){
 
 function renderCombat(){
     const el=document.getElementById('combatList');
+    saveCombat();
     if(!combatants.length){ el.innerHTML=''; return; }
 
     el.innerHTML=combatants.map((c,i)=>{
@@ -2879,13 +3174,13 @@ function renderCombat(){
             ?`<div class="hp-bar-bg"><div class="hp-bar" style="width:${pct}%;background:${bc}"></div></div>
                <div class="cb-hp">
                  <button class="round-btn minus" onclick="adjustCombatHp(${i},-1)" aria-label="Lose HP">${ic('minus')}</button>
-                 <div class="hp-read"><b style="color:${isDead?'var(--red-light)':'var(--ink)'}">${c.hp}</b><span>/ ${c.maxHp} HP</span></div>
+                 <button class="hp-read" onclick="hpEdit(${i})" aria-label="Type damage or healing"><b style="color:${isDead?'var(--red-light)':'var(--ink)'}">${c.hp}</b><span>/ ${c.maxHp} HP</span></button>
                  <button class="round-btn plus" onclick="adjustCombatHp(${i},1)" aria-label="Heal">${ic('plus')}</button>
                  ${step}
                </div>`
             :`<div class="cb-hp">
                  <button class="round-btn minus" onclick="adjustCombatHp(${i},-1)" aria-label="Less damage">${ic('minus')}</button>
-                 <div class="hp-read"><b style="color:#fda4af">${c.damageDealt}</b><span>dmg dealt</span></div>
+                 <button class="hp-read" onclick="hpEdit(${i})" aria-label="Type damage dealt"><b style="color:#fda4af">${c.damageDealt}</b><span>dmg dealt</span></button>
                  <button class="round-btn plus" onclick="adjustCombatHp(${i},1)" aria-label="More damage">${ic('plus')}</button>
                  ${step}
                </div>`;
@@ -2907,6 +3202,17 @@ function renderCombat(){
                 <button class="x-btn" onclick="removeCombatant(${i})" aria-label="Remove ${esc(c.name)}">${ic('x')}</button>
             </div>
             ${hpSection}
+            ${combatSW?(()=>{
+                const pen=Math.min(c.wounds||0,3)+Math.min(c.fatigue||0,2);
+                const pips=(k,n,fat)=>Array.from({length:n},(_,j)=>`<button class="pip${fat?' fat':''}${(c[k]||0)>=j+1?' on':''}" onclick="swSet(${i},'${k}',${j+1})" aria-label="${k} ${j+1}"></button>`).join('')
+                    +`<button class="pip inc${fat?' fat':''}${(c[k]||0)>=n+1?' on':''}" onclick="swSet(${i},'${k}',${n+1})">INC</button>`;
+                return `<div class="sw-row">
+                    <div class="sw-grp"><span>Bennies</span><button class="mini-round" onclick="swAdj(${i},'bennies',-1)" aria-label="Spend benny">${ic('minus')}</button><b>${c.bennies||0}</b><button class="mini-round" onclick="swAdj(${i},'bennies',1)" aria-label="Add benny">${ic('plus')}</button></div>
+                    <div class="sw-grp"><span>Wounds</span>${pips('wounds',3,false)}</div>
+                    <div class="sw-grp"><span>Fatigue</span>${pips('fatigue',2,true)}</div>
+                    ${pen?`<span class="sw-pen">${'−'+pen}</span>`:''}
+                </div>`;
+            })():''}
             <div class="conditions-wrap">${condTags}<button class="condition-tag cond-custom" onclick="addCustomCondition(${i})">${ic('plus')}Custom</button>${customTags}</div>
         </div>`;
     }).join('');
@@ -2933,7 +3239,7 @@ document.getElementById('badgeBoard').innerHTML=meepleSvg('red','',true);
 document.getElementById('cardBackFace').innerHTML=meepleSvg('yellow','',true);
 document.getElementById('deckVisual').innerHTML=meepleSvg('yellow','',true);
 buildCoin();
-syncDiceToggles(); renderCombat(); renderSegmentList(); drawTimerArc(0); loadPresets(); renderLineup();
+renderDiceGrid(); syncDiceToggles(); renderChars(); renderHistory(); loadCombat(); renderSegmentList(); drawTimerArc(0); renderLineup();
 window.addEventListener('resize',()=>{ if(document.getElementById('panel-spinner').classList.contains('active')){ sizeSpinner(); drawSpinner(); } });
 (function(){ const m=load('gb-mode',null); if(m&&MODES[m]) setMode(m); })();
 </script>
