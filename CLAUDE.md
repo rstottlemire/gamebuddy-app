@@ -63,6 +63,9 @@ Each tab is a `<div id="panel-<id>" class="panel">`. `showPanel(id)` switches ta
   - **Standard:** HP or damage dealt (GM mode), +/− with step, tap the HP number to type damage or healing (`hpEdit`), D&D-style conditions.
   - **Savage Worlds:** no HP. Bennies, Wounds (3 + INC) and Fatigue (2 + INC) pips with the total penalty, SWADE statuses (`SW_CONDITIONS`). INC wounds = Incapacitated.
   - **Fate:** Physical/Mental stress boxes (tap the label to resize, default 3), Mild/Moderate/Severe consequences, Fate points, Taken Out, and aspects with free invokes (`aspectMenu`). A Scene card (`fateScene`) holds situation aspects and **zones**; combatants get a zone chip and the list groups by zone. **Popcorn initiative**: "Pick next" (`pickNext`) lets the current actor choose from those who haven't acted; when everyone has, the round advances. Combatants keep the order they were added in.
+  - **Sides:** each combatant has `side` = `party` / `enemy` / `neutral` (`SIDES`: green / red / yellow), which drives the card's `--cc` color. Pick it in the Add form's side picker (default Enemy); tap the side tag on a card to cycle it.
+  - **Parties:** `gb-parties` = `{parties:[{id,name,members:[{name,maxHp,physN,mentN,fp}]}], cur}`. "Start fight with …" (`startFight`) clears the tracker and adds the members as fresh Party combatants; "Save current party" stores the current Party-side combatants. Tabs work like the dice Characters tabs.
+  - **Initiative:** in Standard and Savage Worlds, tap the initiative token to type it (`editInit`); the list re-sorts and the active combatant stays active.
   - Dialogs support `numeric`, `row`, and `'INPUT:action'` buttons.
 - **Fate dice:** a tray of only dF (no Wild Card) shows Fate ladder names (`ladder()`), and the stepper becomes **Opposition** (`diceSet.opp`). The banner shows Fail / Tie / Succeed / Succeed with Style (3+ shifts).
 
@@ -75,11 +78,6 @@ Each tab is a `<div id="panel-<id>" class="panel">`. `showPanel(id)` switches ta
 ### Shared helpers
 
 `ic(name)`, `uiAlert/uiConfirm/uiPrompt/uiDialog` (in-app, Promise-based; **never use the browser's `alert/confirm/prompt`**), `toast(msg)`, `load/store` (localStorage JSON wrapped in try/catch), `getAudio/tone/beep` (one shared AudioContext, unlocked on first tap), `wakeOn/wakeOff(reason)`, `vibrate`, `openModal/closeModal`, `openInstall`, `esc` (escape user text before inserting it into HTML).
-
-## Ideas for later (requested by the user, not built yet)
-
-- **Combat parties:** saved Party tabs in the Combat Tracker that auto-fill the player characters each fight, with enemies added after.
-- **Combatant sides:** color each combatant by side: green = party, red = enemy, yellow = neutral (or other). Probably a side picker on each card, with the color driving the card's accent stripe and token.
 
 ## Conventions
 

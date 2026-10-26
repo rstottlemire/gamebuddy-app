@@ -1,6 +1,6 @@
 // GameBuddy service worker: makes the app work fully offline.
 // Bump CACHE whenever any file below changes, so phones download the new version.
-const CACHE = 'gamebuddy-v9';
+const CACHE = 'gamebuddy-v10';
 const ASSETS = [
     './index.html',
     './manifest.json',

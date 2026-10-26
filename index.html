@@ -813,6 +813,16 @@
         .zone-head { display: flex; align-items: center; gap: 8px; margin: 14px 2px 8px; font-family: 'Fredoka One', cursive; font-size: 1.05rem; color: var(--accent); text-shadow: 0 2px 8px rgba(0,0,0,0.7); }
         .zone-head .ic { width: 18px; height: 18px; }
         .acted-tag { font-size: 0.64rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-3); }
+        /* Combat sides: green party, red enemy, yellow neutral */
+        .side-chip { flex-shrink: 0; display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 14px; border: 1.5px solid; background: transparent; font-size: 0.64rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
+        .side-chip.party { color: #8fdcb2; border-color: #4caf7d; background: rgba(76,175,125,0.14); }
+        .side-chip.enemy { color: #ff9a8e; border-color: #e5473a; background: rgba(229,71,58,0.14); }
+        .side-chip.neutral { color: #f8d27a; border-color: #f2b134; background: rgba(242,177,52,0.14); }
+        #combatSideSeg button.on[data-side="party"] { background: #4caf7d; color: #04200f; box-shadow: 0 2px 0 #23664a; }
+        #combatSideSeg button.on[data-side="enemy"] { background: #e5473a; color: #fff; box-shadow: 0 2px 0 #7d1f17; }
+        #combatSideSeg button.on[data-side="neutral"] { background: #f2b134; color: #2b1a02; box-shadow: 0 2px 0 #9a6a0c; }
+        button.init-token { border: none; cursor: pointer; touch-action: manipulation; }
+        button.init-token:active { transform: scale(0.92); }
         .sw-pen { font-family: 'Fredoka One', cursive; font-size: 0.95rem; color: #ff8a7e; background: rgba(217,72,59,0.14); padding: 2px 9px; border-radius: 10px; }
         .hp-read b { font-family: 'Fredoka One', cursive; font-weight: normal; font-size: 1.8rem; }
         .hp-read span { color: var(--ink-3); font-size: 0.82rem; font-weight: 800; margin-left: 3px; }
@@ -1236,6 +1246,12 @@
                 <button data-s="sw" onclick="setCombatSys('sw')">Savage Worlds</button>
                 <button data-s="fate" onclick="setCombatSys('fate')">Fate</button>
             </div>
+            <div class="small-label">Add as</div>
+            <div class="seg" id="combatSideSeg" style="margin-bottom:10px;">
+                <button data-side="party" onclick="setAddSide('party')">Party</button>
+                <button data-side="enemy" class="on" onclick="setAddSide('enemy')">Enemy</button>
+                <button data-side="neutral" onclick="setAddSide('neutral')">Neutral</button>
+            </div>
             <div class="combat-form" id="combatForm">
                 <input type="text" class="name" id="combatNameInput" placeholder="Name" onkeydown="if(event.key==='Enter')addCombatant()">
                 <input type="number" id="combatInitInput" placeholder="Initiative" min="-10" max="99" inputmode="numeric">
@@ -1250,6 +1266,16 @@
                 </label>
             </div>
             <div class="muted-note" id="combatHint" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="card" id="partyCard">
+            <div class="small-label">Parties</div>
+            <div class="char-tabs" id="partyTabs"></div>
+            <div class="conditions-wrap" id="partyMembers" style="margin:0 0 12px;"></div>
+            <div class="btn-row" style="justify-content:flex-start;">
+                <button class="btn btn-green btn-sm" id="partyStartBtn" onclick="startFight()"><svg class="ic"><use href="#i-play"/></svg><span id="partyStartLabel">Start fight</span></button>
+                <button class="btn btn-ghost btn-sm" onclick="saveCurrentParty()"><svg class="ic"><use href="#i-save"/></svg>Save current party</button>
+            </div>
         </div>
 
         <div class="card" id="fateSceneCard" style="display:none;">
@@ -3111,14 +3137,87 @@ const CONDITIONS=['Poisoned','Stunned','Prone','Invisible','Blinded','Frightened
 const SW_CONDITIONS=['Shaken','Distracted','Vulnerable','Stunned','Entangled','Bound','Prone','On Hold'];
 const FATE_CONSQ=[{k:'mild',label:'Mild',v:2},{k:'moderate',label:'Moderate',v:4},{k:'severe',label:'Severe',v:6}];
 const combatColors=['#e5473a','#3d8fe0','#f2b134','#4caf7d','#b294f2','#ff7a45','#13a3a3','#f272aa'];
+// Sides color each combatant: green party, red enemy, yellow neutral
+const SIDES={party:{label:'Party',color:'#4caf7d'},enemy:{label:'Enemy',color:'#e5473a'},neutral:{label:'Neutral',color:'#f2b134'}};
+const SIDE_ORDER=['party','enemy','neutral'];
 let combatants=[], combatRound=1, combatActiveTurn=0;
-let combatGMMode=true, combatSys='std';
+let combatGMMode=true, combatSys='std', combatAddSide='enemy';
 let fateScene={aspects:[],zones:[]};
 
-function newCombatant(name,initiative,maxHp,idx){
-    return {name,initiative,maxHp,hp:maxHp,damageDealt:0,conditions:[],color:combatColors[idx%combatColors.length],step:1,
+function newCombatant(name,initiative,maxHp,idx,side){
+    return {name,initiative,maxHp,hp:maxHp,damageDealt:0,conditions:[],color:combatColors[idx%combatColors.length],step:1,side:side||'enemy',
         bennies:3,wounds:0,fatigue:0,
         fp:3,phys:[false,false,false],ment:[false,false,false],consq:{},out:false,aspects:[],zone:'',acted:false};
+}
+function sideOf(c){ return SIDES[c.side]?c.side:'enemy'; }
+function setAddSide(s){ combatAddSide=s; document.querySelectorAll('#combatSideSeg button').forEach(b=>b.classList.toggle('on',b.dataset.side===s)); }
+function cycleSide(i){ const c=combatants[i]; if(!c) return; c.side=SIDE_ORDER[(SIDE_ORDER.indexOf(sideOf(c))+1)%SIDE_ORDER.length]; renderCombat(); }
+// Tap the initiative token to type this fight's initiative; the list re-sorts, keeping the same combatant active
+async function editInit(i){
+    const c=combatants[i]; if(!c||combatSys==='fate') return;
+    const v=await uiDialog({title:`${esc(c.name)} initiative`,input:true,numeric:true,value:String(c.initiative||''),placeholder:'e.g. 15',cancel:null,buttons:[{label:'Cancel',value:null},{label:'Set',value:'INPUT',cls:'btn-primary'}]});
+    if(v===null||v===undefined||!combatants[i]) return;
+    const n=parseInt(v); if(isNaN(n)) return;
+    const active=combatants[combatActiveTurn];
+    c.initiative=Math.max(-99,Math.min(999,n));
+    combatants.sort((a,b)=>b.initiative-a.initiative);
+    combatActiveTurn=Math.max(0,combatants.indexOf(active));
+    renderCombat();
+}
+
+// ---------- Parties (saved player groups that start each fight) ----------
+let partyData=load('gb-parties',null);
+if(!partyData||!Array.isArray(partyData.parties)) partyData={parties:[],cur:null};
+function saveParties(){ store('gb-parties',partyData); }
+function curParty(){ return partyData.parties.find(p=>p.id===partyData.cur)||partyData.parties[0]||null; }
+function renderParties(){
+    const cur=curParty();
+    document.getElementById('partyTabs').innerHTML=partyData.parties.map(p=>`<button class="char-tab${cur&&p.id===cur.id?' on':''}" onclick="${cur&&p.id===cur.id?'partyMenu()':`pickParty('${p.id}')`}">${esc(p.name)}${cur&&p.id===cur.id?ic('edit'):''}</button>`).join('')
+        +`<button class="char-tab add" onclick="addParty()">${ic('plus')}Party</button>`;
+    const el=document.getElementById('partyMembers');
+    if(!cur){ el.innerHTML='<span class="roster-empty">Save your regular group once, then start every fight with them in one tap.</span>'; }
+    else el.innerHTML=cur.members.length?cur.members.map(m=>`<span class="side-chip party">${esc(m.name)}</span>`).join(''):'<span class="roster-empty">No members yet. Add your players as Party, then tap Save current party.</span>';
+    document.getElementById('partyStartBtn').disabled=!(cur&&cur.members.length);
+    document.getElementById('partyStartLabel').textContent=cur?`Start fight with ${cur.name}`:'Start fight';
+}
+function pickParty(id){ partyData.cur=id; saveParties(); renderParties(); }
+async function addParty(){
+    const n=await uiPrompt('A saved group of player characters.',{title:'New party',placeholder:'e.g. Tuesday Group',ok:'Add'});
+    if(!n||!n.trim()) return null;
+    const p={id:'pt'+uid(),name:n.trim().slice(0,24),members:[]};
+    partyData.parties.push(p); partyData.cur=p.id; saveParties(); renderParties(); return p;
+}
+async function partyMenu(){
+    const p=curParty(); if(!p) return;
+    const a=await uiDialog({title:esc(p.name),msg:`${p.members.length} member${p.members.length!==1?'s':''}`,cancel:null,
+        buttons:[{label:'Rename',value:'rename',cls:'btn-primary'},{label:'Delete',value:'delete',cls:'btn-red'},{label:'Cancel',value:null}]});
+    if(a==='rename'){ const n=await uiPrompt('',{title:'Rename party',value:p.name}); if(n&&n.trim()){ p.name=n.trim().slice(0,24); saveParties(); renderParties(); } }
+    else if(a==='delete'){
+        if(!await uiConfirm('',{title:`Delete “${esc(p.name)}”?`,ok:'Delete',danger:true})) return;
+        partyData.parties=partyData.parties.filter(x=>x.id!==p.id); partyData.cur=partyData.parties[0]?partyData.parties[0].id:null; saveParties(); renderParties();
+    }
+}
+async function saveCurrentParty(){
+    const members=combatants.filter(c=>sideOf(c)==='party');
+    if(!members.length){ uiAlert('Mark your players as Party first (tap their side tag, or pick Party when adding them).'); return; }
+    let p=curParty(); if(!p){ p=await addParty(); if(!p) return; }
+    if(p.members.length&&!await uiConfirm(`Replace its ${p.members.length} saved member${p.members.length!==1?'s':''} with the ${members.length} Party combatant${members.length!==1?'s':''} in this fight.`,{title:`Update “${esc(p.name)}”?`,ok:'Save'})) return;
+    p.members=members.map(c=>({name:c.name,maxHp:c.maxHp,physN:c.phys.length,mentN:c.ment.length,fp:c.fp}));
+    saveParties(); renderParties(); toast(`Saved ${p.name}`);
+}
+async function startFight(){
+    const p=curParty(); if(!p||!p.members.length) return;
+    if(combatants.length&&!await uiConfirm('The current fight will be cleared.',{title:`Start a new fight with ${esc(p.name)}?`,ok:'Start',danger:true})) return;
+    resetCombat();
+    p.members.forEach((m,k)=>{
+        const c=newCombatant(m.name,0,m.maxHp||20,k,'party');
+        c.phys=Array(m.physN||3).fill(false); c.ment=Array(m.mentN||3).fill(false); c.fp=m.fp!=null?m.fp:3;
+        combatants.push(c);
+    });
+    document.getElementById('combatRoundBar').style.display='flex';
+    document.getElementById('combatEmptyCard').style.display='none';
+    renderCombat();
+    toast(combatSys==='fate'?'Party ready. Add enemies below':'Party ready. Tap tokens to set initiative');
 }
 // Combat is saved on this phone so closing the app mid-fight loses nothing
 function saveCombat(){ store('gb-combat',{list:combatants,round:combatRound,turn:combatActiveTurn,gm:combatGMMode,sys:combatSys,scene:fateScene}); }
@@ -3158,7 +3257,7 @@ function addCombatant(){
     const name=nameEl.value.trim()||`Combatant ${combatants.length+1}`;
     const initiative=parseInt(initEl.value)||0;
     const maxHp=Math.max(1,parseInt(hpEl.value)||20);
-    combatants.push(newCombatant(name,initiative,maxHp,combatants.length));
+    combatants.push(newCombatant(name,initiative,maxHp,combatants.length,combatAddSide));
     // Fate uses popcorn initiative, so keep the order people were added in
     if(combatSys!=='fate') combatants.sort((a,b)=>b.initiative-a.initiative);
     nameEl.value=''; initEl.value=''; hpEl.value='';
@@ -3396,13 +3495,16 @@ function combatCardHtml(c,i){
             +c.conditions.map((cd,k)=>list.includes(cd)?'':`<button class="condition-tag cond-custom-active" onclick="toggleConditionAt(${i},${k})">${esc(cd)}${ic('x')}</button>`).join('');
     }
 
-    const token=sys==='fate'?esc((c.name||'?').trim().charAt(0).toUpperCase()):c.initiative;
-    return `<div class="combat-item${isActive?' active-turn':''}${isDead?' dead-combatant':''}" style="--cc:${c.color}">
+    const side=sideOf(c);
+    const token=sys==='fate'?`<div class="init-token">${esc((c.name||'?').trim().charAt(0).toUpperCase())}</div>`
+        :`<button class="init-token" onclick="editInit(${i})" aria-label="Set initiative">${c.initiative}</button>`;
+    return `<div class="combat-item${isActive?' active-turn':''}${isDead?' dead-combatant':''}" style="--cc:${SIDES[side].color}">
         <div class="cb-head">
-            <div class="init-token">${token}</div>
+            ${token}
             <span class="cb-name">${esc(c.name)}</span>
+            <button class="side-chip ${side}" onclick="cycleSide(${i})" aria-label="Change side">${SIDES[side].label}</button>
             ${isDead?`<span class="cb-turn" style="color:var(--red-light)">${ic('skull')}</span>`:''}
-            ${isActive?`<span class="cb-turn">${ic('bolt')}Turn</span>`:(sys==='fate'&&c.acted?'<span class="acted-tag">Acted</span>':'')}
+            ${isActive?`<span class="cb-turn" aria-label="Their turn">${ic('bolt')}</span>`:(sys==='fate'&&c.acted?'<span class="acted-tag">Acted</span>':'')}
             <button class="x-btn" onclick="removeCombatant(${i})" aria-label="Remove ${esc(c.name)}">${ic('x')}</button>
         </div>
         ${body}
@@ -3412,7 +3514,7 @@ function combatCardHtml(c,i){
 
 function renderCombat(){
     const el=document.getElementById('combatList');
-    saveCombat(); renderScene();
+    saveCombat(); renderScene(); renderParties();
     if(!combatants.length){ el.innerHTML=''; return; }
     // Fate with zones: group combatants under their zone
     if(combatSys==='fate'&&fateScene.zones.length){
